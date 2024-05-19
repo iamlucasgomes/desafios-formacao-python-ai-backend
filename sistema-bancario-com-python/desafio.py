@@ -3,16 +3,16 @@ from uuid import uuid4
 
 
 class SistemaBancario:
-    def __init__(self, nome: str, saldo: int):
+    def __init__(self, nome: str):
         self.nome = nome
-        self.saldo = saldo
+        self.saldo = 0
         self.historico = []
         self.saques = 0
         self.ultima_data_saque = None
 
     def deposito(self, valor: int):
         if valor <= 0:
-            raise ValueError("Valor deve ser maior que zero")
+            return print("Valor deve ser maior que zero")
         else:
             self.saldo += valor
             self.historico.append(
@@ -30,7 +30,7 @@ class SistemaBancario:
 
         hoje = datetime.now().date()
 
-        if self.saldo == 0:
+        if self.saldo <= 0 or self.saldo < valor:
             return print("Saldo insuficiente")
 
         if valor > 500:
@@ -69,13 +69,33 @@ class SistemaBancario:
         print(f"Saldo atual: R${self.saldo:.2f}")
         print("-----------------")
 
+    def operacoes(self):
+        menu = """
+
+            [d] Depositar
+            [s] Sacar
+            [e] Extrato
+            [q] Sair
+
+            => """
+        operacao_selecionada = input(menu)
+        match operacao_selecionada:
+            case "d":
+                valor = int(input("Digite o valor do depósito: "))
+                self.deposito(valor)
+                self.operacoes()
+            case "s":
+                valor = int(input("Digite o valor do saque: "))
+                self.saque(valor)
+                self.operacoes()
+            case "e":
+                self.extrato()
+                self.operacoes()
+            case "q":
+                return print("até mais!")
+
 
 # Testando o código
 
-cliente1 = SistemaBancario("João", 1000)
-print(cliente1.deposito(500))
-print(cliente1.saque(600))
-print(cliente1.saque(200))
-print(cliente1.saque(200))
-print(cliente1.saque(200))
-cliente1.extrato()
+cliente1 = SistemaBancario("João")
+cliente1.operacoes()
